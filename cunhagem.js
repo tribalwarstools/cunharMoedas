@@ -36,7 +36,7 @@
             </div>
             <div>
                 <button id="iniciarCunhagem" class="btn btn-confirm-yes">Iniciar</button>
-                <button id="pararCunhagem" class="btn btn-cancel=no" disabled>Parar</button>
+                <button id="pararCunhagem" class="btn btn-confirm-no" disabled>Parar</button>
             </div>
         </div>
     `;
@@ -44,6 +44,19 @@
     Dialog.show("cunhagem_auto", html);
 
     function executarCunhagem() {
+        // Preenche todos os selects com o MAIOR valor possível
+        document.querySelectorAll('select.coin_amount').forEach(select => {
+            const opcoesValidas = [...select.options]
+                .map(opt => parseInt(opt.value, 10))
+                .filter(v => !isNaN(v) && v > 0);
+
+            if (opcoesValidas.length > 0) {
+                const maiorValor = Math.max(...opcoesValidas);
+                select.value = maiorValor.toString();
+                select.dispatchEvent(new Event('change', { bubbles: true }));
+            }
+        });
+
         console.log("[Cunhagem] Selecionando aldeias...");
         document.querySelector('#select_anchor_top')?.click();
 
