@@ -43,6 +43,27 @@
 
     Dialog.show("cunhagem_auto", html);
 
+    // Função para atualizar a tabela sem reload
+    function atualizarTabelaCoinOverview() {
+        fetch(location.href)
+            .then(response => response.text())
+            .then(html => {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                const novaTabela = doc.querySelector('#coin_overview_table');
+                if (novaTabela) {
+                    const tabelaAtual = document.querySelector('#coin_overview_table');
+                    if (tabelaAtual) {
+                        tabelaAtual.innerHTML = novaTabela.innerHTML;
+                        console.log('[Atualização] Tabela coin_overview_table atualizada!');
+                    }
+                } else {
+                    console.warn('Não encontrou a tabela coin_overview_table na resposta.');
+                }
+            })
+            .catch(err => console.error('Erro ao atualizar tabela:', err));
+    }
+
     function executarCunhagem() {
         // Preenche todos os selects com o MAIOR valor possível
         document.querySelectorAll('select.coin_amount').forEach(select => {
@@ -63,6 +84,10 @@
         setTimeout(() => {
             console.log("[Cunhagem] Cunhando moedas...");
             document.querySelector('.mint_multi_button')?.click();
+
+            // Atualizar a tabela logo após a cunhagem
+            atualizarTabelaCoinOverview();
+
         }, 1000);
     }
 
